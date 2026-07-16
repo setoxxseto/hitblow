@@ -14,8 +14,14 @@ def play(digits=3):
     print(f"Hit & Blow（{digits} 桁・重複なし）")
 
     # ===== ① 開始時に足す（難易度・あいさつ など）: ここに書く =====
+    from .level import select_level
+    
+    digits = select_level()
+    secret = make_secret(digits)
+    print(f"Hit & Blow（{digits} 桁・重複なし）")
 
     tries = 0
+    
     while True:
         guess = input("予想 > ").strip()
 
