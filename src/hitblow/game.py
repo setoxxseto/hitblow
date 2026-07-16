@@ -24,6 +24,12 @@ def play(digits=3):
         #      if guess == "h":
         #          print(hint(secret)); continue
 
+        from .count import is_over_limit, get_max_tries  # ← 追加
+        max_tries = get_max_tries(digits)  # ← 追加
+        if is_over_limit(tries, max_tries):  # ← 追加
+            print(f"残念…{max_tries} 回以内に当てられませんでした（答え {secret}）")  # ← 追加
+            break  # ← 追加
+
         if len(guess) != digits or not guess.isdigit():
             print(f"{digits} 桁の数字で入力してね")
             continue
