@@ -7,46 +7,52 @@
 """
 
 from .core import judge, make_secret
-
+from .stage import get_stage, clear_stage
 
 def play(digits=3):
-    secret = make_secret(digits)
-    print(f"Hit & Blow（{digits} 桁・重複なし）")
 
     # ===== ① 開始時に足す（難易度・あいさつ など）: ここに書く =====
     from .level import select_level
-    
+    from .stage import get_stage
+
     digits = select_level()
-    secret = make_secret(digits)
-    print(f"Hit & Blow（{digits} 桁・重複なし）")
 
-    tries = 0
+    while True:  # ← ステージループ追加
+
+        secret = make_secret(digits)
+        print(f"=== STAGE {get_stage()} ===")
+        print(f"Hit & Blow（{digits} 桁・重複なし）")
+
+        tries = 0
     
-    while True:
-        guess = input("予想 > ").strip()
+        while True:
+            guess = input("予想 > ").strip()
 
-        # ===== ② 入力コマンドに足す（ヒント など）: ここに書く（import もここに） =====
-        # 例:  from .hint import hint
-        #      if guess == "h":
-        #          print(hint(secret)); continue
+            # ===== ② 入力コマンドに足す（ヒント など）: ここに書く（import もここに） =====
+            # 例:  from .hint import hint
+            #      if guess == "h":
+            #          print(hint(secret)); continue
 
-        from .count import is_over_limit, get_max_tries  # ← 追加
-        max_tries = get_max_tries(digits)  # ← 追加
-        if is_over_limit(tries, max_tries):  # ← 追加
-            print(f"残念…{max_tries} 回以内に当てられませんでした（答え {secret}）")  # ← 追加
-            break  # ← 追加
+            from .count import is_over_limit, get_max_tries  # ← 追加
+            max_tries = get_max_tries(digits)  # ← 追加
+            if is_over_limit(tries, max_tries):
+                print(f"残念…{max_tries} 回以内に当てられませんでした（答え {secret}）")
+                return
 
-        if len(guess) != digits or not guess.isdigit():
-            print(f"{digits} 桁の数字で入力してね")
-            continue
-        tries += 1
-        hit, blow = judge(secret, guess)
-        print(f"  Hit={hit}  Blow={blow}")
-        if hit == digits:
+            if len(guess) != digits or not guess.isdigit():
+                print(f"{digits} 桁の数字で入力してね")
+                continue
+            tries += 1
+            hit, blow = judge(secret, guess)
+            print(f"  Hit={hit}  Blow={blow}")
+            if hit == digits:
 
-            # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
+                # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
 
-            from .hint import score
-            print(f"スコア：{score(tries)} 点")
-            print(f"正解！ {tries} 回で当たり（答え {secret}）")
-            break
+                from .hint import score
+                print(f"スコア：{score(tries)} 点")
+                print(f"STAGE {get_stage()} CLEAR!")
+                print(f"正解！ {tries} 回で当たり（答え {secret}）")
+
+                clear_stage()
+                break
